@@ -3,6 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmitrylebedev/mesto-project-ff.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dmitrylebedev/mesto-project-ff/issues"
+  },
+  "homepage": "https://github.com/dmitrylebedev/mesto-project-ff#readme",
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@babel/preset-env": "^7.28.3",
@@ -20,21 +36,5 @@
     "webpack": "^5.101.3",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
-  },
-  "scripts": {
-    "build": "webpack --mode=production",
-    "dev": "webpack serve --mode=development",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dmitrylebedev/mesto-project-ff.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dmitrylebedev/mesto-project-ff/issues"
-  },
-  "homepage": "https://github.com/dmitrylebedev/mesto-project-ff#readme"
+  }
 }
