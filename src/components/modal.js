@@ -28,3 +28,19 @@ export function openImageModal(cardData) {
 
   openModal(imageModal);
 }
+
+export function setupModalCloseHandlers(modalElement) {
+  const closeButton = modalElement.querySelector('.popup__close');
+
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      closeModal(modalElement);
+    });
+  }
+
+  modalElement.addEventListener('click', (evt) => {
+    if (evt.target === modalElement) {
+      closeModal(modalElement);
+    }
+  });
+}
