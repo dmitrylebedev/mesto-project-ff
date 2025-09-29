@@ -1,11 +1,12 @@
 export function createCard(cardData, deleteCard, likeCard, openImageModal) {
   const cardTemplate = document.querySelector('#card-template');
-  const cardElement = cardTemplate.content.cloneNode(true);
+  const fragment = cardTemplate.content.cloneNode(true);
+  const cardRoot = fragment.querySelector('.card');
 
-  const cardImage = cardElement.querySelector('.card__image');
-  const cardTitle = cardElement.querySelector('.card__title');
-  const deleteButton = cardElement.querySelector('.card__delete-button');
-  const likeButton = cardElement.querySelector('.card__like-button');
+  const cardImage = cardRoot.querySelector('.card__image');
+  const cardTitle = cardRoot.querySelector('.card__title');
+  const deleteButton = cardRoot.querySelector('.card__delete-button');
+  const likeButton = cardRoot.querySelector('.card__like-button');
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
@@ -16,14 +17,14 @@ export function createCard(cardData, deleteCard, likeCard, openImageModal) {
   });
 
   deleteButton.addEventListener('click', () => {
-    deleteCard(cardElement.querySelector('.card'));
+    deleteCard(cardRoot);
   });
 
   likeButton.addEventListener('click', () => {
     likeCard(likeButton);
   });
 
-  return cardElement;
+  return cardRoot;
 }
 
 export function deleteCard(cardElement) {
