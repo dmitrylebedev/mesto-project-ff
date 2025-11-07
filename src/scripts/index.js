@@ -39,11 +39,15 @@ function initApp() {
     inputElement.classList.remove('popup__input_type_error');
   }
 
-  function validateName() {
+  function validateName(showEmptyError = false) {
     const value = nameInput.value.trim();
 
     if (value.length === 0) {
-      hideError(nameError, nameInput);
+      if (showEmptyError) {
+        showError(nameError, nameInput, 'Вы пропустили это поле.');
+      } else {
+        hideError(nameError, nameInput);
+      }
       return false;
     }
 
@@ -61,11 +65,15 @@ function initApp() {
     return true;
   }
 
-  function validateDescription() {
+  function validateDescription(showEmptyError = false) {
     const value = descriptionInput.value.trim();
 
     if (value.length === 0) {
-      hideError(descriptionError, descriptionInput);
+      if (showEmptyError) {
+        showError(descriptionError, descriptionInput, 'Вы пропустили это поле.');
+      } else {
+        hideError(descriptionError, descriptionInput);
+      }
       return false;
     }
 
@@ -83,9 +91,9 @@ function initApp() {
     return true;
   }
 
-  function checkFormValidity() {
-    const isNameValid = validateName();
-    const isDescriptionValid = validateDescription();
+  function checkFormValidity(showEmptyErrors = false) {
+    const isNameValid = validateName(showEmptyErrors);
+    const isDescriptionValid = validateDescription(showEmptyErrors);
     const isFormValid = isNameValid && isDescriptionValid;
 
     submitButton.disabled = !isFormValid;
@@ -93,19 +101,33 @@ function initApp() {
   }
 
   function clearValidationErrors() {
-    hideError(nameError);
-    hideError(descriptionError);
-    checkFormValidity();
+    hideError(nameError, nameInput);
+    hideError(descriptionError, descriptionInput);
+    checkFormValidity(false);
   }
 
   nameInput.addEventListener('input', () => {
-    validateName();
-    checkFormValidity();
+    const isNameValid = validateName(true);
+    const isDescriptionValid = validateDescription(false);
+    submitButton.disabled = !(isNameValid && isDescriptionValid);
+  });
+
+  nameInput.addEventListener('blur', () => {
+    const isNameValid = validateName(true);
+    const isDescriptionValid = validateDescription(false);
+    submitButton.disabled = !(isNameValid && isDescriptionValid);
   });
 
   descriptionInput.addEventListener('input', () => {
-    validateDescription();
-    checkFormValidity();
+    const isNameValid = validateName(false);
+    const isDescriptionValid = validateDescription(true);
+    submitButton.disabled = !(isNameValid && isDescriptionValid);
+  });
+
+  descriptionInput.addEventListener('blur', () => {
+    const isNameValid = validateName(false);
+    const isDescriptionValid = validateDescription(true);
+    submitButton.disabled = !(isNameValid && isDescriptionValid);
   });
 
   editProfileButton.addEventListener('click', () => {
@@ -115,14 +137,109 @@ function initApp() {
     openModal(editProfileModal);
   });
 
+  const cardNameInput = addCardForm.elements['place-name'];
+  const linkInput = addCardForm.elements.link;
+  const addCardSubmitButton = addCardForm.querySelector('.popup__button');
+  const cardNameError = addCardForm.querySelector('.popup__error_type_card-name');
+  const linkError = addCardForm.querySelector('.popup__error_type_url');
+
+  const cardNamePattern = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/;
+
+  function validateCardName(showEmptyError = false) {
+    const value = cardNameInput.value.trim();
+
+    if (value.length === 0) {
+      if (showEmptyError) {
+        showError(cardNameError, cardNameInput, 'Вы пропустили это поле.');
+      } else {
+        hideError(cardNameError, cardNameInput);
+      }
+      return false;
+    }
+
+    if (value.length < 2 || value.length > 30) {
+      showError(cardNameError, cardNameInput, 'Должно быть от 2 до 30 символов');
+      return false;
+    }
+
+    if (!cardNamePattern.test(value)) {
+      showError(cardNameError, cardNameInput, 'Может содержать только латиницу, кириллицу, дефис и пробелы');
+      return false;
+    }
+
+    hideError(cardNameError, cardNameInput);
+    return true;
+  }
+
+  function validateLink(showEmptyError = false) {
+    const value = linkInput.value.trim();
+
+    if (value.length === 0) {
+      if (showEmptyError) {
+        showError(linkError, linkInput, 'Вы пропустили это поле.');
+      } else {
+        hideError(linkError, linkInput);
+      }
+      return false;
+    }
+
+    if (!linkInput.validity.valid) {
+      showError(linkError, linkInput, 'Введите адрес сайта.');
+      return false;
+    }
+
+    hideError(linkError, linkInput);
+    return true;
+  }
+
+  function checkAddCardFormValidity(showEmptyErrors = false) {
+    const isCardNameValid = validateCardName(showEmptyErrors);
+    const isLinkValid = validateLink(showEmptyErrors);
+    const isFormValid = isCardNameValid && isLinkValid;
+
+    addCardSubmitButton.disabled = !isFormValid;
+    return isFormValid;
+  }
+
+  function clearAddCardValidationErrors() {
+    hideError(cardNameError, cardNameInput);
+    hideError(linkError, linkInput);
+    addCardSubmitButton.disabled = true;
+  }
+
+  cardNameInput.addEventListener('input', () => {
+    const isCardNameValid = validateCardName(true);
+    const isLinkValid = validateLink(false);
+    addCardSubmitButton.disabled = !(isCardNameValid && isLinkValid);
+  });
+
+  cardNameInput.addEventListener('blur', () => {
+    const isCardNameValid = validateCardName(true);
+    const isLinkValid = validateLink(false);
+    addCardSubmitButton.disabled = !(isCardNameValid && isLinkValid);
+  });
+
+  linkInput.addEventListener('input', () => {
+    const isCardNameValid = validateCardName(false);
+    const isLinkValid = validateLink(true);
+    addCardSubmitButton.disabled = !(isCardNameValid && isLinkValid);
+  });
+
+  linkInput.addEventListener('blur', () => {
+    const isCardNameValid = validateCardName(false);
+    const isLinkValid = validateLink(true);
+    addCardSubmitButton.disabled = !(isCardNameValid && isLinkValid);
+  });
+
   addCardButton.addEventListener('click', () => {
+    clearAddCardValidationErrors();
     openModal(addCardModal);
   });
 
   editProfileForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    if (!checkFormValidity()) {
+    if (!checkFormValidity(true)) {
       return;
     }
 
@@ -135,18 +252,20 @@ function initApp() {
   addCardForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    const cardNameInput = addCardForm.elements['place-name'];
-    const linkInput = addCardForm.elements.link;
+    if (!checkAddCardFormValidity(true)) {
+      return;
+    }
 
     const newCardData = {
-      name: cardNameInput.value,
-      link: linkInput.value
+      name: cardNameInput.value.trim(),
+      link: linkInput.value.trim()
     };
 
     const cardElement = createCard(newCardData, deleteCard, likeCard, openImageModal);
     placesList.prepend(cardElement);
 
     addCardForm.reset();
+    clearAddCardValidationErrors();
     closeModal(addCardModal);
   });
 

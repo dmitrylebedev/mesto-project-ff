@@ -14,6 +14,10 @@
   margin-bottom: 0;
 }
 
+.popup__input:has(+ .popup__error_visible) {
+  margin-bottom: 10px;
+}
+
 .popup__input_type_error {
   border-bottom-color: rgba(255, 0, 0, 1);
 }
