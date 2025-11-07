@@ -1,0 +1,11 @@
+.popup__error {
+  visibility: hidden;
+  display: block;
+  font-size: 12px;
+  line-height: 15px;
+  color: rgba(255, 0, 0, 1);
+}
+
+.popup__error_visible {
+  visibility: visible;
+}

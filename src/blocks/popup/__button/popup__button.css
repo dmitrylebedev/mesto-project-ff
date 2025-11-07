@@ -7,16 +7,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000;
+  background: rgba(0, 0, 0, 1);
+  border: 1px solid rgba(0, 0, 0, 1);
   border-radius: 2px;
-  border: none;
   transition: visibility 0s, background 0.3s;
   margin-top: 48px;
 }
 
 .popup__button:hover {
   background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(0, 0, 0, 0.3);
   cursor: pointer;
+}
+
+.popup__button:disabled {
+  background: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.2);
+  cursor: default;
 }
 
 @media screen and (max-width: 568px) {
