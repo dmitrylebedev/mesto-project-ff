@@ -48,6 +48,9 @@
               class="popup__input popup__input_type_name"
               placeholder="Имя"
               required
+              data-error-message="Вы пропустили это поле."
+              data-length-error="Должно быть от 2 до 40 символов"
+              data-pattern-error="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
             <span class="popup__error popup__error_type_name"></span>
             <input
@@ -55,6 +58,9 @@
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
               required
+              data-error-message="Вы пропустили это поле."
+              data-length-error="Должно быть от 2 до 200 символов"
+              data-pattern-error="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
             <span class="popup__error popup__error_type_description"></span>
             <button type="submit" class="button popup__button">
@@ -74,6 +80,9 @@
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
               required
+              data-error-message="Вы пропустили это поле."
+              data-length-error="Должно быть от 2 до 30 символов"
+              data-pattern-error="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
             <span class="popup__error popup__error_type_card-name"></span>
             <input
@@ -82,6 +91,8 @@
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
               required
+              data-error-message="Вы пропустили это поле."
+              data-url-error="Введите адрес сайта."
             />
             <span class="popup__error popup__error_type_url"></span>
             <button type="submit" class="button popup__button">
