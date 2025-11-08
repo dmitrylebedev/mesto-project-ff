@@ -2,6 +2,7 @@ import { createCard, deleteCard, likeCard } from '../components/card.js';
 import { openModal, closeModal, openImageModal, setupModalCloseHandlers } from '../components/modal.js';
 import { initialCards } from './cards.js';
 import { enableValidation, clearValidation, checkFormValidityOnSubmit } from './validation.js';
+import { getUserInfo } from './api.js';
 
 // Конфигурация валидации
 const validationConfig = {
@@ -25,6 +26,7 @@ function initApp() {
 
   const profileTitle = document.querySelector('.profile__title');
   const profileDescription = document.querySelector('.profile__description');
+  const profileImage = document.querySelector('.profile__image');
 
   const placesList = document.querySelector('.places__list');
 
@@ -35,10 +37,10 @@ function initApp() {
   editProfileButton.addEventListener('click', () => {
     const nameInput = editProfileForm.elements.name;
     const descriptionInput = editProfileForm.elements.description;
-    
+
     nameInput.value = profileTitle.textContent;
     descriptionInput.value = profileDescription.textContent;
-    
+
     clearValidation(editProfileForm, validationConfig);
     openModal(editProfileModal);
   });
@@ -100,6 +102,18 @@ function initApp() {
   setupModalCloseHandlers(editProfileModal);
   setupModalCloseHandlers(addCardModal);
   setupModalCloseHandlers(imageModal);
+
+  // Загружаем информацию о пользователе с сервера
+  getUserInfo()
+    .then((userData) => {
+      // Обновляем данные профиля
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      profileImage.style.backgroundImage = `url('${userData.avatar}')`;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   renderCards();
 }
