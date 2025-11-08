@@ -1,7 +1,7 @@
-import { createCard, likeCard } from '../components/card.js';
+import { createCard } from '../components/card.js';
 import { openModal, closeModal, openImageModal, setupModalCloseHandlers } from '../components/modal.js';
 import { enableValidation, clearValidation, checkFormValidityOnSubmit } from './validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo, addCard, deleteCard } from './api.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addCard, deleteCard, likeCard, unlikeCard } from './api.js';
 
 // Конфигурация валидации
 const validationConfig = {
@@ -106,13 +106,8 @@ function initApp() {
     // Отправляем новую карточку на сервер
     addCard(name, link)
       .then((cardData) => {
-        // Временная отладка (можно удалить после проверки)
-        console.log('New card created:', cardData);
-        console.log('Card owner ID:', cardData.owner?._id);
-        console.log('Current user ID:', currentUserId);
-        
         // Добавляем карточку на страницу после успешного ответа
-        const cardElement = createCard(cardData, currentUserId, handleDeleteClick, likeCard, openImageModal);
+        const cardElement = createCard(cardData, currentUserId, handleDeleteClick, handleLikeClick, openImageModal);
         placesList.prepend(cardElement);
 
         addCardForm.reset();
@@ -129,6 +124,29 @@ function initApp() {
     currentCardToDelete = cardId;
     currentCardElement = cardElement;
     openModal(deleteCardModal);
+  }
+
+  // Обработчик клика по кнопке лайка
+  function handleLikeClick(cardId, likeButton, likeCount, isLiked) {
+    const likePromise = isLiked ? unlikeCard(cardId) : likeCard(cardId);
+    
+    likePromise
+      .then((updatedCard) => {
+        // Обновляем состояние кнопки лайка
+        if (updatedCard.likes.some(like => like._id === currentUserId)) {
+          likeButton.classList.add('card__like-button_is-active');
+        } else {
+          likeButton.classList.remove('card__like-button_is-active');
+        }
+        
+        // Обновляем счётчик лайков из ответа сервера
+        if (likeCount && updatedCard.likes) {
+          likeCount.textContent = updatedCard.likes.length;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   // Обработчик подтверждения удаления карточки
@@ -153,7 +171,7 @@ function initApp() {
 
   function renderCards(cards, userId) {
     cards.forEach(cardData => {
-      const cardElement = createCard(cardData, userId, handleDeleteClick, likeCard, openImageModal);
+      const cardElement = createCard(cardData, userId, handleDeleteClick, handleLikeClick, openImageModal);
       placesList.appendChild(cardElement);
     });
   }
