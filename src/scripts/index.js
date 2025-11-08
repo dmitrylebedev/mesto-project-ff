@@ -1,7 +1,7 @@
 import { createCard, deleteCard, likeCard } from '../components/card.js';
 import { openModal, closeModal, openImageModal, setupModalCloseHandlers } from '../components/modal.js';
 import { enableValidation, clearValidation, checkFormValidityOnSubmit } from './validation.js';
-import { getUserInfo, getInitialCards } from './api.js';
+import { getUserInfo, getInitialCards, updateUserInfo } from './api.js';
 
 // Конфигурация валидации
 const validationConfig = {
@@ -61,10 +61,20 @@ function initApp() {
     const nameInput = editProfileForm.elements.name;
     const descriptionInput = editProfileForm.elements.description;
 
-    profileTitle.textContent = nameInput.value.trim();
-    profileDescription.textContent = descriptionInput.value.trim();
+    const name = nameInput.value.trim();
+    const about = descriptionInput.value.trim();
 
-    closeModal(editProfileModal);
+    // Отправляем обновлённые данные на сервер
+    updateUserInfo(name, about)
+      .then((userData) => {
+        // Обновляем данные профиля на странице после успешного ответа
+        profileTitle.textContent = userData.name;
+        profileDescription.textContent = userData.about;
+        closeModal(editProfileModal);
+      })
+      .catch((err) => {
+        console.log(err); // выводим ошибку в консоль
+      });
   });
 
   // Обработчик отправки формы добавления карточки
