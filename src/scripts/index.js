@@ -1,8 +1,7 @@
 import { createCard, deleteCard, likeCard } from '../components/card.js';
 import { openModal, closeModal, openImageModal, setupModalCloseHandlers } from '../components/modal.js';
-import { initialCards } from './cards.js';
 import { enableValidation, clearValidation, checkFormValidityOnSubmit } from './validation.js';
-import { getUserInfo } from './api.js';
+import { getUserInfo, getInitialCards } from './api.js';
 
 // Конфигурация валидации
 const validationConfig = {
@@ -92,8 +91,8 @@ function initApp() {
     closeModal(addCardModal);
   });
 
-  function renderCards() {
-    initialCards.forEach(cardData => {
+  function renderCards(cards, userId) {
+    cards.forEach(cardData => {
       const cardElement = createCard(cardData, deleteCard, likeCard, openImageModal);
       placesList.appendChild(cardElement);
     });
@@ -103,19 +102,20 @@ function initApp() {
   setupModalCloseHandlers(addCardModal);
   setupModalCloseHandlers(imageModal);
 
-  // Загружаем информацию о пользователе с сервера
-  getUserInfo()
-    .then((userData) => {
+  // Загружаем информацию о пользователе и карточки с сервера одновременно
+  Promise.all([getUserInfo(), getInitialCards()])
+    .then(([userData, cards]) => {
       // Обновляем данные профиля
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
       profileImage.style.backgroundImage = `url('${userData.avatar}')`;
+
+      // Отображаем карточки после получения _id пользователя
+      renderCards(cards, userData._id);
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err); // выводим ошибку в консоль
     });
-
-  renderCards();
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
