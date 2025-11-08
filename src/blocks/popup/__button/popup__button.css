@@ -27,6 +27,10 @@
   cursor: default;
 }
 
+.popup__button_type_confirm {
+  margin-top: 24px;
+}
+
 @media screen and (max-width: 568px) {
   .popup__button {
     font-size: 14px;

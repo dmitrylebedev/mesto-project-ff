@@ -221,6 +221,12 @@ function initApp() {
   const confirmDeleteButton = deleteCardModal.querySelector('.popup__button_type_confirm');
   confirmDeleteButton.addEventListener('click', () => {
     if (currentCardToDelete) {
+      const originalButtonText = confirmDeleteButton.textContent;
+      
+      // Показываем состояние загрузки
+      confirmDeleteButton.textContent = 'Удаление...';
+      confirmDeleteButton.disabled = true;
+      
       deleteCard(currentCardToDelete)
         .then(() => {
           // Удаляем карточку со страницы после успешного ответа
@@ -233,6 +239,11 @@ function initApp() {
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          // Возвращаем оригинальный текст кнопки
+          confirmDeleteButton.textContent = originalButtonText;
+          confirmDeleteButton.disabled = false;
         });
     }
   });
