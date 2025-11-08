@@ -41,6 +41,14 @@ function initApp() {
     descriptionInput.value = profileDescription.textContent;
 
     clearValidation(editProfileForm, validationConfig);
+
+    // Валидируем поля после заполнения, чтобы активировать кнопку если данные валидны
+    if (editProfileForm._validators) {
+      editProfileForm._validators.forEach(validator => {
+        validator(false);
+      });
+    }
+
     openModal(editProfileModal);
   });
 

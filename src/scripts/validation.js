@@ -1,4 +1,4 @@
-const namePattern = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/;
+const namePattern = /^[a-zA-Zа-яА-ЯёЁ\s-,]+$/;
 
 // Функция для отображения ошибки
 function showError(errorElement, inputElement, message, config) {
