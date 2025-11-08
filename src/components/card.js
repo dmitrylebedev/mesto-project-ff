@@ -1,4 +1,4 @@
-export function createCard(cardData, deleteCard, likeCard, openImageModal) {
+export function createCard(cardData, userId, handleDeleteClick, likeCard, openImageModal) {
   const cardTemplate = document.querySelector('#card-template');
   const fragment = cardTemplate.content.cloneNode(true);
   const cardRoot = fragment.querySelector('.card');
@@ -12,18 +12,28 @@ export function createCard(cardData, deleteCard, likeCard, openImageModal) {
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
   cardTitle.textContent = cardData.name;
-  
+
   // Отображаем количество лайков
   if (likeCount && cardData.likes) {
     likeCount.textContent = cardData.likes.length;
   }
 
+  // Скрываем кнопку удаления, если карточка создана не текущим пользователем
+  if (deleteButton) {
+    const isOwner = cardData.owner && cardData.owner._id === userId;
+    // Проверяем, является ли текущий пользователь владельцем карточки
+    if (isOwner) {
+      deleteButton.style.display = 'block';
+      deleteButton.addEventListener('click', () => {
+        handleDeleteClick(cardData._id, cardRoot);
+      });
+    } else {
+      deleteButton.style.display = 'none';
+    }
+  }
+
   cardImage.addEventListener('click', () => {
     openImageModal(cardData);
-  });
-
-  deleteButton.addEventListener('click', () => {
-    deleteCard(cardRoot);
   });
 
   likeButton.addEventListener('click', () => {
@@ -31,10 +41,6 @@ export function createCard(cardData, deleteCard, likeCard, openImageModal) {
   });
 
   return cardRoot;
-}
-
-export function deleteCard(cardElement) {
-  cardElement.remove();
 }
 
 export function likeCard(likeButton) {

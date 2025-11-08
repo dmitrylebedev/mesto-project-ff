@@ -65,3 +65,16 @@ export const addCard = (name, link) => {
       return Promise.reject(`Ошибка: ${res.status}`);
     });
 };
+
+export const deleteCard = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    });
+};
