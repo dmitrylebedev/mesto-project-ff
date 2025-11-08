@@ -79,11 +79,18 @@ function initApp() {
       return;
     }
 
+    const submitButton = editProfileForm.querySelector(validationConfig.submitButtonSelector);
+    const originalButtonText = submitButton.textContent;
+
     const nameInput = editProfileForm.elements.name;
     const descriptionInput = editProfileForm.elements.description;
 
     const name = nameInput.value.trim();
     const about = descriptionInput.value.trim();
+
+    // Показываем состояние загрузки
+    submitButton.textContent = 'Сохранение...';
+    submitButton.disabled = true;
 
     // Отправляем обновлённые данные на сервер
     updateUserInfo(name, about)
@@ -95,6 +102,11 @@ function initApp() {
       })
       .catch((err) => {
         console.log(err); // выводим ошибку в консоль
+      })
+      .finally(() => {
+        // Возвращаем оригинальный текст кнопки
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
       });
   });
 
@@ -106,11 +118,18 @@ function initApp() {
       return;
     }
 
+    const submitButton = addCardForm.querySelector(validationConfig.submitButtonSelector);
+    const originalButtonText = submitButton.textContent;
+
     const nameInput = addCardForm.elements['place-name'];
     const linkInput = addCardForm.elements.link;
 
     const name = nameInput.value.trim();
     const link = linkInput.value.trim();
+
+    // Показываем состояние загрузки
+    submitButton.textContent = 'Сохранение...';
+    submitButton.disabled = true;
 
     // Отправляем новую карточку на сервер
     addCard(name, link)
@@ -125,6 +144,11 @@ function initApp() {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        // Возвращаем оригинальный текст кнопки
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
       });
   });
 
@@ -136,8 +160,15 @@ function initApp() {
       return;
     }
 
+    const submitButton = editAvatarForm.querySelector(validationConfig.submitButtonSelector);
+    const originalButtonText = submitButton.textContent;
+
     const avatarInput = editAvatarForm.elements.avatar;
     const avatar = avatarInput.value.trim();
+
+    // Показываем состояние загрузки
+    submitButton.textContent = 'Сохранение...';
+    submitButton.disabled = true;
 
     // Отправляем обновлённый аватар на сервер
     updateAvatar(avatar)
@@ -148,6 +179,11 @@ function initApp() {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        // Возвращаем оригинальный текст кнопки
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
       });
   });
 
