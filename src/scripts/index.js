@@ -1,7 +1,7 @@
 import { createCard, deleteCard, likeCard } from '../components/card.js';
 import { openModal, closeModal, openImageModal, setupModalCloseHandlers } from '../components/modal.js';
 import { enableValidation, clearValidation, checkFormValidityOnSubmit } from './validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo } from './api.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addCard } from './api.js';
 
 // Конфигурация валидации
 const validationConfig = {
@@ -96,17 +96,23 @@ function initApp() {
     const nameInput = addCardForm.elements['place-name'];
     const linkInput = addCardForm.elements.link;
 
-    const newCardData = {
-      name: nameInput.value.trim(),
-      link: linkInput.value.trim()
-    };
+    const name = nameInput.value.trim();
+    const link = linkInput.value.trim();
 
-    const cardElement = createCard(newCardData, deleteCard, likeCard, openImageModal);
-    placesList.prepend(cardElement);
+    // Отправляем новую карточку на сервер
+    addCard(name, link)
+      .then((cardData) => {
+        // Добавляем карточку на страницу после успешного ответа
+        const cardElement = createCard(cardData, deleteCard, likeCard, openImageModal);
+        placesList.prepend(cardElement);
 
-    addCardForm.reset();
-    clearValidation(addCardForm, validationConfig);
-    closeModal(addCardModal);
+        addCardForm.reset();
+        clearValidation(addCardForm, validationConfig);
+        closeModal(addCardModal);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   });
 
   function renderCards(cards, userId) {
