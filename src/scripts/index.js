@@ -1,7 +1,7 @@
 import { createCard } from '../components/card.js';
 import { openModal, closeModal, openImageModal, setupModalCloseHandlers } from '../components/modal.js';
 import { enableValidation, clearValidation, checkFormValidityOnSubmit } from './validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo, addCard, deleteCard, likeCard, unlikeCard } from './api.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addCard, deleteCard, likeCard, unlikeCard, updateAvatar } from './api.js';
 
 // Конфигурация валидации
 const validationConfig = {
@@ -16,13 +16,16 @@ const validationConfig = {
 function initApp() {
   const editProfileButton = document.querySelector('.profile__edit-button');
   const addCardButton = document.querySelector('.profile__add-button');
+  const editAvatarButton = document.querySelector('.profile__image-edit-button');
   const editProfileModal = document.querySelector('.popup_type_edit');
   const addCardModal = document.querySelector('.popup_type_new-card');
   const imageModal = document.querySelector('.popup_type_image');
   const deleteCardModal = document.querySelector('.popup_type_delete-card');
+  const editAvatarModal = document.querySelector('.popup_type_edit-avatar');
 
   const editProfileForm = document.querySelector('form[name="edit-profile"]');
   const addCardForm = document.querySelector('form[name="new-place"]');
+  const editAvatarForm = document.querySelector('form[name="edit-avatar"]');
 
   const profileTitle = document.querySelector('.profile__title');
   const profileDescription = document.querySelector('.profile__description');
@@ -60,6 +63,12 @@ function initApp() {
   addCardButton.addEventListener('click', () => {
     clearValidation(addCardForm, validationConfig);
     openModal(addCardModal);
+  });
+
+  // Обработчик открытия модального окна редактирования аватара
+  editAvatarButton.addEventListener('click', () => {
+    clearValidation(editAvatarForm, validationConfig);
+    openModal(editAvatarModal);
   });
 
   // Обработчик отправки формы редактирования профиля
@@ -113,6 +122,29 @@ function initApp() {
         addCardForm.reset();
         clearValidation(addCardForm, validationConfig);
         closeModal(addCardModal);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
+  // Обработчик отправки формы редактирования аватара
+  editAvatarForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    if (!checkFormValidityOnSubmit(editAvatarForm)) {
+      return;
+    }
+
+    const avatarInput = editAvatarForm.elements.avatar;
+    const avatar = avatarInput.value.trim();
+
+    // Отправляем обновлённый аватар на сервер
+    updateAvatar(avatar)
+      .then((userData) => {
+        // Обновляем аватар на странице после успешного ответа
+        profileImage.style.backgroundImage = `url('${userData.avatar}')`;
+        closeModal(editAvatarModal);
       })
       .catch((err) => {
         console.log(err);
@@ -180,6 +212,7 @@ function initApp() {
   setupModalCloseHandlers(addCardModal);
   setupModalCloseHandlers(imageModal);
   setupModalCloseHandlers(deleteCardModal);
+  setupModalCloseHandlers(editAvatarModal);
 
   // Загружаем информацию о пользователе и карточки с сервера одновременно
   Promise.all([getUserInfo(), getInitialCards()])

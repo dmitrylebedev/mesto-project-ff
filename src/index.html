@@ -20,7 +20,9 @@
 
       <main class="content">
         <section class="profile page__section">
-          <div class="profile__image"></div>
+          <div class="profile__image">
+            <button class="profile__image-edit-button" type="button" aria-label="Редактировать аватар"></button>
+          </div>
           <div class="profile__info">
             <h1 class="profile__title">Жак-Ив Кусто</h1>
             <button class="profile__edit-button" type="button"></button>
@@ -120,6 +122,28 @@
           <button type="button" class="button popup__button popup__button_type_confirm">
             Да
           </button>
+        </div>
+      </div>
+
+      <div class="popup popup_is-animated popup_type_edit-avatar">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Обновить аватар</h3>
+          <form class="popup__form" name="edit-avatar">
+            <input
+              type="url"
+              name="avatar"
+              class="popup__input popup__input_type_avatar-url"
+              placeholder="Ссылка на аватар"
+              required
+              data-error-message="Вы пропустили это поле."
+              data-url-error="Введите адрес сайта."
+            />
+            <span class="popup__error popup__error_type_avatar-url"></span>
+            <button type="submit" class="button popup__button">
+              Сохранить
+            </button>
+          </form>
         </div>
       </div>
     </div>

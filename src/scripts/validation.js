@@ -149,6 +149,13 @@ function getFieldConfigs(formName) {
         errorSelector: '.popup__error_type_url',
         type: 'url'
       }
+    ],
+    'edit-avatar': [
+      {
+        inputSelector: 'input[name="avatar"]',
+        errorSelector: '.popup__error_type_avatar-url',
+        type: 'url'
+      }
     ]
   };
 
