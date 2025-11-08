@@ -1,4 +1,3 @@
-// Регулярное выражение для проверки: только латиница, кириллица, дефис и пробелы
 const namePattern = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/;
 
 // Функция для отображения ошибки
@@ -118,17 +117,55 @@ export function clearValidation(form, config) {
   }
 }
 
+// Функция для получения конфигурации полей формы
+function getFieldConfigs(formName) {
+  const configs = {
+    'edit-profile': [
+      {
+        inputSelector: 'input[name="name"]',
+        errorSelector: '.popup__error_type_name',
+        type: 'text',
+        minLength: 2,
+        maxLength: 40
+      },
+      {
+        inputSelector: 'input[name="description"]',
+        errorSelector: '.popup__error_type_description',
+        type: 'text',
+        minLength: 2,
+        maxLength: 200
+      }
+    ],
+    'new-place': [
+      {
+        inputSelector: 'input[name="place-name"]',
+        errorSelector: '.popup__error_type_card-name',
+        type: 'text',
+        minLength: 2,
+        maxLength: 30
+      },
+      {
+        inputSelector: 'input[name="link"]',
+        errorSelector: '.popup__error_type_url',
+        type: 'url'
+      }
+    ]
+  };
+
+  return configs[formName];
+}
+
 // Функция для включения валидации формы
 function enableFormValidation(form, config, fieldConfigs) {
   const submitButton = form.querySelector(config.submitButtonSelector);
-  
+
   if (!submitButton) return;
 
   // Создаем валидаторы для каждого поля
   const validators = fieldConfigs.map(fieldConfig => {
     const input = form.querySelector(fieldConfig.inputSelector);
     const errorElement = form.querySelector(fieldConfig.errorSelector);
-    
+
     if (!input || !errorElement) return null;
 
     let validateField;
@@ -136,16 +173,15 @@ function enableFormValidation(form, config, fieldConfigs) {
       validateField = (showEmptyError) => validateUrlField(input, errorElement, config, showEmptyError);
     } else {
       validateField = (showEmptyError) => validateTextField(
-        input, 
-        errorElement, 
-        config, 
-        fieldConfig.minLength, 
-        fieldConfig.maxLength, 
+        input,
+        errorElement,
+        config,
+        fieldConfig.minLength,
+        fieldConfig.maxLength,
         showEmptyError
       );
     }
 
-    // Обработчик input
     input.addEventListener('input', () => {
       const currentFieldValid = validateField(true);
       const otherFieldsValid = validators
@@ -162,7 +198,6 @@ function enableFormValidation(form, config, fieldConfigs) {
       }
     });
 
-    // Обработчик blur
     input.addEventListener('blur', () => {
       const currentFieldValid = validateField(true);
       const otherFieldsValid = validators
@@ -187,46 +222,27 @@ function enableFormValidation(form, config, fieldConfigs) {
   form._validationConfig = config;
 }
 
+// Функция для настройки обработчиков событий формы
+function setEventListeners(formElement, config) {
+  const formName = formElement.getAttribute('name');
+  const fieldConfigs = getFieldConfigs(formName);
+
+  if (fieldConfigs) {
+    enableFormValidation(formElement, config, fieldConfigs);
+  }
+}
+
 // Главная функция для включения валидации всех форм
 export function enableValidation(config) {
-  const forms = document.querySelectorAll(config.formSelector);
-  
-  forms.forEach(form => {
-    const formName = form.getAttribute('name');
-    
-    if (formName === 'edit-profile') {
-      enableFormValidation(form, config, [
-        {
-          inputSelector: 'input[name="name"]',
-          errorSelector: '.popup__error_type_name',
-          type: 'text',
-          minLength: 2,
-          maxLength: 40
-        },
-        {
-          inputSelector: 'input[name="description"]',
-          errorSelector: '.popup__error_type_description',
-          type: 'text',
-          minLength: 2,
-          maxLength: 200
-        }
-      ]);
-    } else if (formName === 'new-place') {
-      enableFormValidation(form, config, [
-        {
-          inputSelector: 'input[name="place-name"]',
-          errorSelector: '.popup__error_type_card-name',
-          type: 'text',
-          minLength: 2,
-          maxLength: 30
-        },
-        {
-          inputSelector: 'input[name="link"]',
-          errorSelector: '.popup__error_type_url',
-          type: 'url'
-        }
-      ]);
-    }
+  // Найдём все формы с указанным селектором в DOM,
+  // сделаем из них массив методом Array.from
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
+
+  // Переберём полученную коллекцию
+  formList.forEach((formElement) => {
+    // Для каждой формы вызовем функцию setEventListeners,
+    // передав ей элемент формы и конфиг
+    setEventListeners(formElement, config);
   });
 }
 
