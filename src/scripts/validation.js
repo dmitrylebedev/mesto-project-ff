@@ -122,15 +122,13 @@ function getFieldConfigs(formName) {
   const configs = {
     'edit-profile': [
       {
-        inputSelector: 'input[name="name"]',
-        errorSelector: '.popup__error_type_name',
+        name: 'name',
         type: 'text',
         minLength: 2,
         maxLength: 40
       },
       {
-        inputSelector: 'input[name="description"]',
-        errorSelector: '.popup__error_type_description',
+        name: 'description',
         type: 'text',
         minLength: 2,
         maxLength: 200
@@ -138,22 +136,19 @@ function getFieldConfigs(formName) {
     ],
     'new-place': [
       {
-        inputSelector: 'input[name="place-name"]',
-        errorSelector: '.popup__error_type_card-name',
+        name: 'place-name',
         type: 'text',
         minLength: 2,
         maxLength: 30
       },
       {
-        inputSelector: 'input[name="link"]',
-        errorSelector: '.popup__error_type_url',
+        name: 'link',
         type: 'url'
       }
     ],
     'edit-avatar': [
       {
-        inputSelector: 'input[name="avatar"]',
-        errorSelector: '.popup__error_type_avatar-url',
+        name: 'avatar',
         type: 'url'
       }
     ]
@@ -170,10 +165,20 @@ function enableFormValidation(form, config, fieldConfigs) {
 
   // Создаем валидаторы для каждого поля
   const validators = fieldConfigs.map(fieldConfig => {
-    const input = form.querySelector(fieldConfig.inputSelector);
-    const errorElement = form.querySelector(fieldConfig.errorSelector);
-
-    if (!input || !errorElement) return null;
+    // Используем универсальный селектор для поиска input по name
+    const input = form.querySelector(`input[name="${fieldConfig.name}"]`);
+    
+    if (!input) {
+      return null;
+    }
+    
+    // Находим соответствующий error элемент - он всегда следующий sibling после input
+    const errorElement = input.nextElementSibling;
+    
+    // Проверяем, что это действительно error элемент
+    if (!errorElement || !errorElement.classList.contains('popup__error')) {
+      return null;
+    }
 
     let validateField;
     if (fieldConfig.type === 'url') {
